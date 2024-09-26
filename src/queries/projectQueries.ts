@@ -1,13 +1,14 @@
 import { eq } from "drizzle-orm";
 
-import { db } from "../db";
+import { db } from "../models/db";
 import type { InsertProject } from "../models/projectModel";
-import { projects as projectsTable } from "../db/schema/projectSchema";
+import { projects as projectsTable } from "../models/db/schema/projectSchema";
 
 export const getAllProjects = async () => {
   const result = await db.select().from(projectsTable);
   return result;
 };
+
 export const postProject = async (data: InsertProject) => {
   const result = await db
     .insert(projectsTable)
@@ -18,6 +19,7 @@ export const postProject = async (data: InsertProject) => {
 
   return result;
 };
+
 export const deleteProject = async (id: number) => {
   const result = await db
     .delete(projectsTable)

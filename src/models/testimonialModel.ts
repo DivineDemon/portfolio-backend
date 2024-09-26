@@ -1,10 +1,9 @@
-import { z } from "zod";
+import type { InferInsertModel } from "drizzle-orm";
+import { insertTestimonialSchema } from "./db/schema/testimonialSchema";
+import { testimonials as testimonialsTable } from "./db/schema/testimonialSchema";
 
-export const testimonialModel = z.object({
-  id: z.number(),
-  company: z.string(),
-  content: z.string(),
-  designation: z.string(),
-  client_name: z.string(),
-  image: z.string().optional(),
+export const insertTestimonial = insertTestimonialSchema.omit({
+  id: true,
 });
+
+export type InsertTestimonial = InferInsertModel<typeof testimonialsTable>;

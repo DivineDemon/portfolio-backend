@@ -7,7 +7,7 @@ import {
   getAllProjects,
 } from "../queries/projectQueries";
 import { insertProject } from "../models/projectModel";
-import { insertProjectSchema } from "../db/schema/projectSchema";
+import { insertProjectSchema } from "../models/db/schema/projectSchema";
 
 export const projectsRoute = new Hono()
   .get("/", async (c) => {
@@ -31,28 +31,44 @@ export const projectsRoute = new Hono()
     const project = c.req.valid("json");
     const validatedProject = insertProjectSchema.parse(project);
 
-    const result = await postProject(validatedProject);
+    try {
+      const result = await postProject(validatedProject);
 
-    c.status(201);
-    return c.json({
-      success: true,
-      message: "Project Added Successfully!",
-      data: result,
-    });
+      c.status(201);
+      return c.json({
+        success: true,
+        message: "Project Added Successfully!",
+        data: result,
+      });
+    } catch (error) {
+      return c.json({
+        success: false,
+        message: "Failed to Add Project!",
+        data: error,
+      });
+    }
   })
   .delete("/:id{[0-9]+}", async (c) => {
     const id = parseInt(c.req.param("id"));
-    const result = await deleteProject(id);
 
-    // @ts-ignore
-    if (!result) {
-      return c.notFound();
+    try {
+      const result = await deleteProject(id);
+
+      if (!result) {
+        return c.notFound();
+      }
+
+      c.status(200);
+      return c.json({
+        success: 1,
+        message: "Project Deleted Successfully!",
+        data: result,
+      });
+    } catch (error) {
+      return c.json({
+        success: false,
+        message: "Failed to Delete Project!",
+        data: error,
+      });
     }
-
-    c.status(200);
-    return c.json({
-      success: 1,
-      message: "Project Deleted Successfully!",
-      data: result,
-    });
   });
